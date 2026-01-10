@@ -1,5 +1,7 @@
 class Libro:
     def __init__(self, isbn, titulo, autor):
+        if isbn == "":
+            raise ValueError("el ISBN no puede estar vacio")
         self.isbn = isbn
         self.titulo = titulo
         self.autor = autor

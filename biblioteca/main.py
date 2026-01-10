@@ -1,54 +1,82 @@
-import Biblioteca
+from Biblioteca import Biblioteca
+from Libro import Libro
+from Usuario import Usuario
+from datetime import datetime, date
 
-biblioteca = Biblioteca.Biblioteca()
-print("Bienvenido a la biblioteca")
-try:
-    while True:
-        print("que quieres hacer?")
-        print("1- Registrar libro")
-        print("2- Registrar usuario")
-        print("3- Crear prestamo")
-        print("4- Devolver libro")
-        print("5- Consultar prestamos activos")
-        print("6- Salir")
-        opcion = input()
-        if not opcion.isdigit():
-            print("La opcion debe ser un número")
-            continue
-        opcion = int(opcion)
-        if opcion < 1 or opcion > 6:
-            print("La opcion debe ser 1-6")
-            continue
-        match (opcion):
-            case 1:
-                isbn = input("Dame el ISBN: ")
-                autor = input("Dame el autor: ")
-                titulo = input("Dame el titulo: ")
-                biblioteca.registrar_libro(isbn, titulo, autor)
-                print("Nuevo libro registrado")
-            case 2:
-                id = input("Dame el identificador: ")
-                nombre = input("Dame el nombre: ")
-                if not biblioteca.registrar_usuarios(id, nombre):
-                    print("Ese identificar ya existe")
-            case 3:
-                biblioteca.mostrar_info()
-                fecha_fin = input("Dame la fecha de expiración. ejemplo: 25/2/2026: ")
-                isbn = input("Dime el ISBN del libro: ")
-                id = input("Dame el identificador del usuario: ")
-                biblioteca.crear_prestamo(fecha_fin, isbn, id)
-                print("Prestamo creado satisfactoriamente")
-            case 4:
-                isbn = input("Dime el ISBN del libro: ")
-                id = input("Dame el identificador del usuario: ")
-                biblioteca.devolver_libro(id, isbn)
-            case 5:
-                biblioteca.mostrar_prestamos_activos()
-            case 6:
-                break
-except ValueError as err:
-    print(f"Error: {err}")
+biblioteca = Biblioteca()
 
+print("=== Bienvenido al Sistema de Gestión de Biblioteca ===")
 
-    #TODO controlar que los usuarios no puedan tener mas de 3 prestamos activos
-    #FIXME Darle una vuelta a los test
+while True:
+    print("\n¿Qué quieres hacer?")
+    print("1- Registrar libro")
+    print("2- Registrar usuario")
+    print("3- Crear préstamo")
+    print("4- Devolver libro")
+    print("5- Consultar préstamos activos")
+    print("6- Consultar inventario (Libros/Usuarios)")
+    print("7- Salir")
+    
+    opcion = input("Selecciona una opción: ")
+    
+    if not opcion.isdigit():
+        print("Error: La opción debe ser un número.")
+        continue
+    
+    opcion = int(opcion)
+    
+    try:
+        if opcion == 1:
+            isbn = input("Dame el ISBN: ")
+            titulo = input("Dame el título: ")
+            autor = input("Dame el autor: ")
+            nuevo_libro = Libro(isbn, titulo, autor)
+            biblioteca.registrar_libro(nuevo_libro)
+            print("Libro registrado con éxito.")
+
+        elif opcion == 2:
+            uid = input("Dame el identificador (ID): ")
+            nombre = input("Dame el nombre: ")
+            nuevo_usuario = Usuario(uid, nombre)
+            if biblioteca.registrar_usuario(nuevo_usuario):
+                print("Usuario registrado con éxito.")
+            else:
+                print("Error: Ese identificador ya existe.")
+
+        elif opcion == 3:
+            biblioteca.mostrar_info()
+            isbn = input("Dime el ISBN del libro: ")
+            uid = input("Dame el ID del usuario: ")
+            fecha_hoy = date.today()
+            
+            prestamo = biblioteca.prestar_libro(isbn, uid, fecha_hoy)
+            print(f"Préstamo creado. El libro debe devolverse el: {prestamo.fin.strftime('%d/%m/%Y')}")
+
+        elif opcion == 4:
+            isbn = input("Dime el ISBN del libro a devolver: ")
+            fecha_hoy = date.today()
+            prestamo = biblioteca.devolver_libro(isbn, fecha_hoy)
+            
+            if prestamo:
+                print("Libro devuelto satisfactoriamente.")
+            else:
+                print("No se encontró un préstamo activo para ese ISBN.")
+
+        elif opcion == 5:
+            biblioteca.mostrar_prestamos_activos()
+
+        elif opcion == 6:
+            biblioteca.mostrar_info()
+
+        elif opcion == 7:
+            print("Saliendo del sistema...")
+            break
+        else:
+            print("Opción no válida (1-7).")
+
+    except RuntimeError as e:
+        print(f"Error de operación: {e}")
+    except ValueError as e:
+        print(f"Error de datos: {e}")
+    except Exception as e:
+        print(f"Ha ocurrido un error inesperado: {e}")

@@ -1,105 +1,100 @@
-from .Libro import Libro
-from .Usuario import Usuario
-from .Prestamo import Prestamo
+from Libro import Libro
+from Usuario import Usuario
+from Prestamo import Prestamo
 from datetime import date, datetime
 
-
 class Biblioteca:
-    hoy = date.today()
-
     def __init__(self):
         self.usuarios: list[Usuario] = []
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos = []
+        
+        # Usuarios y libros por defecto
+        self._cargar_datos_por_defecto()
 
-        # 1. Cargar 2 Usuarios por defecto
-        self.registrar_usuarios("001", "Ana García")
-        self.registrar_usuarios("002", "Carlos Pérez")
+    def _cargar_datos_por_defecto(self):
+        # 2 Usuarios
+        self.registrar_usuario(Usuario("U001", "Ana García"))
+        self.registrar_usuario(Usuario("U002", "Carlos Pérez"))
+        # 5 Libros
+        self.registrar_libro(Libro("978-1", "Cien años de soledad", "G. Márquez"))
+        self.registrar_libro(Libro("978-2", "El Principito", "Saint-Exupéry"))
+        self.registrar_libro(Libro("978-3", "1984", "George Orwell"))
+        self.registrar_libro(Libro("978-4", "Harry Potter", "J.K. Rowling"))
+        self.registrar_libro(Libro("978-5", "Don Quijote", "Cervantes"))
 
-        # 2. Cargar 5 Libros por defecto
-        self.registrar_libro("978-1", "Cien años de soledad", "Gabriel García Márquez")
-        self.registrar_libro("978-2", "El Principito", "Antoine de Saint-Exupéry")
-        self.registrar_libro("978-3", "1984", "George Orwell")
-        self.registrar_libro("978-4", "Harry Potter", "J.K. Rowling")
-        self.registrar_libro("978-5", "Don Quijote", "Miguel de Cervantes")
-
-    def registrar_libro(self, ISBN, titulo, autor):
-        """Registra un libro nuevo en la biblioteca"""
-        libro = Libro(ISBN, titulo, autor)
+    def registrar_libro(self, libro: Libro):
         self.libros.append(libro)
 
-    def buscar_usuario(self, id):
-        """Busca un usuario por id"""
-        for item in self.usuarios:
-            if item.identificador == id:
-                return item
+    def registrar_usuario(self, usuario: Usuario):
+        if not self.buscar_usuario(usuario.id):
+            self.usuarios.append(usuario)
+            return True
         return False
+
+    def buscar_usuario(self, id_buscado):
+        """Busca un usuario comparando directamente el atributo id"""
+        for user in self.usuarios:
+            if user.id == id_buscado:
+                return user
+        return None
 
     def buscar_libro(self, isbn):
-        """Busca un libro por isbn"""
-        for item in self.libros:
-            if item.isbn == isbn:
-                return item
-        return False
+        for libro in self.libros:
+            if libro.isbn == isbn:
+                return libro
+        return None
 
-    def registrar_usuarios(self, identificador, nombre):
-        """Registra un nuevo usuario en la biblioteca"""
-        if not self.buscar_usuario(identificador):
-            user = Usuario(identificador, nombre)
-            self.usuarios.append(user)
-        else:
-            return False
-
-    def crear_prestamo(
-        self,
-        fin,
-        isbn,
-        id,
-    ):
-        """Crea un prestamo y elimina el libro prestado"""
+    def prestar_libro(self, isbn, id_usuario, fecha_inicio):
         libro = self.buscar_libro(isbn)
-        usuario = self.buscar_usuario(id)
-        if libro == False or usuario == False:
-            raise ValueError("No se encontro libro o usuario")
+        usuario = self.buscar_usuario(id_usuario)
 
-        fecha_formato = "%d/%m/%Y"
-        fecha_fin = datetime.strptime(fin, fecha_formato).date()
-        prestamo = Prestamo(self.hoy, fecha_fin, libro, usuario)
-        self.prestamos_activos.append(prestamo)
+        # 1. Verificar si el libro existe y está disponible
+        if not libro:
+            raise RuntimeError("El libro no está disponible o no existe")
+        
+        # 2. Verificar si el usuario existe
+        if not usuario:
+            raise RuntimeError("Usuario no encontrado")
+
+        # 3. Verificar límite de préstamos del usuario
+        contador = 0
+        for prestamo in self.prestamos_activos:
+            if prestamo.usuario == usuario:
+                contador = contador + 1
+        if contador >= usuario.max_prestamos:
+            raise RuntimeError("El usuario ya tiene demasiados libros prestados")
+
+        # Crear préstamo
+        nuevo_prestamo = Prestamo(libro, usuario, fecha_inicio)
+        
+        self.prestamos_activos.append(nuevo_prestamo)
         self.libros.remove(libro)
+        
+        return nuevo_prestamo
 
-    def devolver_libro(self, id, isbn):
-        """Devuelve un prestamo moviendolo a la lista
-        de prestamos_vencidos y agrega de nuevo el libro"""
-        usu = self.buscar_usuario(id)
-        print(usu)
-        for item in self.prestamos_activos:
-            if item.usuario == usu and item.libro.isbn == isbn:
-                print("prestamo encontrado")
-                item.devolver(self.hoy)
-                self.prestamos_vencidos.append(item)
-                self.prestamos_activos.remove(item)
-                self.libros.append(item.libro)
+    def devolver_libro(self, isbn, fecha_devolucion):
+        prestamo_encontrado = None
+        for p in self.prestamos_activos:
+            if p.libro.isbn == isbn:
+                prestamo_encontrado = p
+                break
+        
+        if not prestamo_encontrado:
+            return None
 
-                if self.hoy > item.fin:
-                    multa = item.calcular_multa()
-                    print(
-                        f"El usuario debe abonar una cantidad de {multa}€ por retraso en la devolución"
-                    )
-
-    def mostrar_prestamos_activos(self):
-        """Muestra los prestamos activos"""
-        print("=== PRÉSTAMOS ===")
-        for item in self.prestamos_activos:
-            print(item)
+        prestamo_encontrado.devolver(fecha_devolucion)
+        self.prestamos_activos.remove(prestamo_encontrado)
+        self.prestamos_vencidos.append(prestamo_encontrado)
+        self.libros.append(prestamo_encontrado.libro)
+        
+        return prestamo_encontrado
 
     def mostrar_info(self):
-        """Muestra los libros y usuarios de la biblioteca y su estado"""
-        print("=== LIBROS ===")
-        for libro in self.libros:
-            print(libro)
+        print(f"Libros: {len(self.libros)} | Usuarios: {len(self.usuarios)}")
 
-        print("\n=== USUARIOS ===")
-        for usuario in self.usuarios:
-            print(usuario)
+    def mostrar_prestamos_activos(self):
+        print("======PRÉSTAMOS ACTIVOS======")
+        for item in self.prestamos_activos:
+            print(item)
