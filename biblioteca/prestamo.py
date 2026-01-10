@@ -1,5 +1,5 @@
-from Libro import Libro
-from Usuario import Usuario
+from .Libro import Libro
+from .Usuario import Usuario
 from datetime import date
 
 

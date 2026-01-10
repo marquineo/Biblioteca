@@ -1,6 +1,6 @@
-from Libro import Libro
-from Usuario import Usuario
-from Prestamo import Prestamo
+from .Libro import Libro
+from .Usuario import Usuario
+from .Prestamo import Prestamo
 from datetime import date, datetime
 
 
@@ -12,6 +12,17 @@ class Biblioteca:
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos = []
+
+        # 1. Cargar 2 Usuarios por defecto
+        self.registrar_usuarios("001", "Ana García")
+        self.registrar_usuarios("002", "Carlos Pérez")
+
+        # 2. Cargar 5 Libros por defecto
+        self.registrar_libro("978-1", "Cien años de soledad", "Gabriel García Márquez")
+        self.registrar_libro("978-2", "El Principito", "Antoine de Saint-Exupéry")
+        self.registrar_libro("978-3", "1984", "George Orwell")
+        self.registrar_libro("978-4", "Harry Potter", "J.K. Rowling")
+        self.registrar_libro("978-5", "Don Quijote", "Miguel de Cervantes")
 
     def registrar_libro(self, ISBN, titulo, autor):
         """Registra un libro nuevo en la biblioteca"""
@@ -61,10 +72,11 @@ class Biblioteca:
     def devolver_libro(self, id, isbn):
         """Devuelve un prestamo moviendolo a la lista
         de prestamos_vencidos y agrega de nuevo el libro"""
-        libro = self.buscar_libro(isbn)
         usu = self.buscar_usuario(id)
+        print(usu)
         for item in self.prestamos_activos:
-            if item.usuario == usu and item.libro == libro:
+            if item.usuario == usu and item.libro.isbn == isbn:
+                print("prestamo encontrado")
                 item.devolver(self.hoy)
                 self.prestamos_vencidos.append(item)
                 self.prestamos_activos.remove(item)
@@ -72,7 +84,9 @@ class Biblioteca:
 
                 if self.hoy > item.fin:
                     multa = item.calcular_multa()
-                    print(f"El usuario debe abonar una cantidad de {multa}€ por retraso en la devolución")
+                    print(
+                        f"El usuario debe abonar una cantidad de {multa}€ por retraso en la devolución"
+                    )
 
     def mostrar_prestamos_activos(self):
         """Muestra los prestamos activos"""

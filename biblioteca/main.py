@@ -37,7 +37,7 @@ try:
                 isbn = input("Dime el ISBN del libro: ")
                 id = input("Dame el identificador del usuario: ")
                 biblioteca.crear_prestamo(fecha_fin, isbn, id)
-                print("prestamo creado satisfactoriamente")
+                print("Prestamo creado satisfactoriamente")
             case 4:
                 isbn = input("Dime el ISBN del libro: ")
                 id = input("Dame el identificador del usuario: ")
@@ -48,3 +48,7 @@ try:
                 break
 except ValueError as err:
     print(f"Error: {err}")
+
+
+    #TODO controlar que los usuarios no puedan tener mas de 3 prestamos activos
+    #FIXME Darle una vuelta a los test
