@@ -3,9 +3,10 @@ class Usuario:
 
         if max_prestamos < 1:
             raise ValueError("Minimo 1 prestamo maximo")
+        
         self.id = id
         self.nombre = nombre
         self.max_prestamos = max_prestamos
 
     def __str__(self):
-        return f"ID Usuario: {self.id} | Nombre: {self.nombre}"
+        return f"ID Usuario: {self.id} | Nombre: {self.nombre} | max. Préstamos a la vez: {self.max_prestamos}"

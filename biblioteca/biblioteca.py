@@ -1,6 +1,6 @@
-from Libro import Libro
-from Usuario import Usuario
-from Prestamo import Prestamo
+from libro import Libro
+from usuario import Usuario
+from prestamo import Prestamo
 from datetime import date, datetime
 
 class Biblioteca:
@@ -102,8 +102,22 @@ class Biblioteca:
         
         return prestamo_encontrado
 
-    def mostrar_info(self):
-        print(f"Libros: {len(self.libros)} | Usuarios: {len(self.usuarios)}")
+    def mostrar_usuarios(self):
+        print("=====USUARIOS=====")
+        for usuario in self.usuarios:
+            print(usuario)
+    
+    def mostrar_stock(self):
+        print("=====LIBROS EN STOCK=====")
+        for libro in self.libros:
+            print(libro)
+
+    def mostrar_libros_todos(self):
+        print("=====TODOS LOS LIBROS=====")
+        for libro in self.libros:
+            print(libro)
+        for prestamo in self.prestamos_activos:
+            print(prestamo.libro)
 
     def mostrar_prestamos_activos(self):
         print("======PRÉSTAMOS ACTIVOS======")

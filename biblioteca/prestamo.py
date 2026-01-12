@@ -1,5 +1,5 @@
-from Libro import Libro
-from Usuario import Usuario
+from libro import Libro
+from usuario import Usuario
 from datetime import date, timedelta
 
 class Prestamo:
@@ -59,7 +59,6 @@ class Prestamo:
         self.fecha_devolucion = fecha
 
     def __str__(self):
-        # Mantenemos tu str pero ajustando nombres de variables
         estado = "Devuelto" if self.fecha_devolucion else ("Vencido" if self.esta_vencido() else "Activo")
         fecha_dev = self.fecha_devolucion.strftime("%d/%m/%Y") if self.fecha_devolucion else "—"
         

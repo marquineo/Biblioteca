@@ -1,6 +1,6 @@
-from Biblioteca import Biblioteca
-from Libro import Libro
-from Usuario import Usuario
+from biblioteca import Biblioteca
+from libro import Libro
+from usuario import Usuario
 from datetime import datetime, date
 
 biblioteca = Biblioteca()
@@ -14,7 +14,7 @@ while True:
     print("3- Crear préstamo")
     print("4- Devolver libro")
     print("5- Consultar préstamos activos")
-    print("6- Consultar inventario (Libros/Usuarios)")
+    print("6- Consultar inventario (todos los libros/usuarios/libros en stock)")
     print("7- Salir")
     
     opcion = input("Selecciona una opción: ")
@@ -22,11 +22,10 @@ while True:
     if not opcion.isdigit():
         print("Error: La opción debe ser un número.")
         continue
-    
     opcion = int(opcion)
     
     try:
-        match opcion:
+        match(opcion):
             case 1:
                 isbn = input("Dame el ISBN: ")
                 titulo = input("Dame el título: ")
@@ -38,7 +37,15 @@ while True:
             case 2:
                 uid = input("Dame el identificador (ID): ")
                 nombre = input("Dame el nombre: ")
-                nuevo_usuario = Usuario(uid, nombre)
+                max_prestamos = input("Cuantos prestamos puede tener a la vez?")
+                if max_prestamos == "":
+                    nuevo_usuario = Usuario(uid, nombre)
+                else:
+                    if not max_prestamos.isdigit():
+                        print("Introduce un número")
+                        continue
+                    max_prestamos = int(max_prestamos)
+                    nuevo_usuario = Usuario(uid, nombre,max_prestamos)
                 if biblioteca.registrar_usuario(nuevo_usuario):
                     print("Usuario registrado con éxito.")
                 else:
@@ -67,7 +74,29 @@ while True:
                 biblioteca.mostrar_prestamos_activos()
 
             case 6:
-                biblioteca.mostrar_info()
+                    while True:
+                        print("\n¿Qué quieres hacer?")
+                        print("1- Mostrar libros en stock")
+                        print("2- mostrar todos los libros")
+                        print("3- Mostrar usuarios")
+                        print("4- Salir")
+                        entrada = input("Selecciona una opción: ")
+                        if not entrada.isdigit():
+                            print("Introduzca un número")
+                            continue
+                        entrada = int(entrada)
+                        match(entrada):
+                            case 1:
+                                biblioteca.mostrar_stock()
+                            case 2:
+                                biblioteca.mostrar_libros_todos()
+                            case 3:
+                                biblioteca.mostrar_usuarios()
+                            case 4:
+                                print("Volviendo al menú principal....")
+                                break
+                            case _:
+                                print("Opción no válida (1-4).")
 
             case 7:
                 print("Saliendo del sistema...")
