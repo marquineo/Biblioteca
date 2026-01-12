@@ -111,3 +111,6 @@ while True:
         print(f"Error de datos: {e}")
     except Exception as e:
         print(f"Ha ocurrido un error inesperado: {e}")
+
+        #TODO cambiar mostrar_info() (opcion 3 del menú  principal)
+        #TODO asegurar que no se muestrn libros rpestados en stock
