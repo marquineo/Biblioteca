@@ -10,14 +10,14 @@ class Biblioteca:
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos = []
         
-        # Usuarios y libros por defecto
+        # Cargamos datos por defecto
         self._cargar_datos_por_defecto()
 
     def _cargar_datos_por_defecto(self):
-        # 2 Usuarios
+        # Usuarios por defecto
         self.registrar_usuario(Usuario("U001", "Ana García"))
         self.registrar_usuario(Usuario("U002", "Carlos Pérez"))
-        # 5 Libros
+        # Libros por defecto
         self.registrar_libro(Libro("978-1", "Cien años de soledad", "G. Márquez"))
         self.registrar_libro(Libro("978-2", "El Principito", "Saint-Exupéry"))
         self.registrar_libro(Libro("978-3", "1984", "George Orwell"))
@@ -27,7 +27,12 @@ class Biblioteca:
     def registrar_libro(self, libro: Libro):
         self.libros.append(libro)
 
-    def registrar_usuario(self, usuario: Usuario):
+    def registrar_usuario(self, usuario: Usuario) -> bool:
+        """
+        Recibe un usuario por parametro, y si no existe actualemtente
+        lo registra.
+        Retorma: True->Usuario registrado | False-> Usuario ya estaba registrado
+        """
         if not self.buscar_usuario(usuario.id):
             self.usuarios.append(usuario)
             return True
@@ -41,12 +46,14 @@ class Biblioteca:
         return None
 
     def buscar_libro(self, isbn):
+        """Busca un libro comparando directamente el atributo isbn"""
         for libro in self.libros:
             if libro.isbn == isbn:
                 return libro
         return None
 
     def prestar_libro(self, isbn, id_usuario, fecha_inicio):
+        """Verifica que se cumplan las condiciones y crea el préstamo"""
         libro = self.buscar_libro(isbn)
         usuario = self.buscar_usuario(id_usuario)
 
@@ -75,10 +82,14 @@ class Biblioteca:
         return nuevo_prestamo
 
     def devolver_libro(self, isbn, fecha_devolucion):
+        """
+        Busca el préstamo pasado por parámetro y si lo encuentra lo devuelve y retorna
+        retorna None si no lo encuentra
+        """
         prestamo_encontrado = None
-        for p in self.prestamos_activos:
-            if p.libro.isbn == isbn:
-                prestamo_encontrado = p
+        for pres in self.prestamos_activos:
+            if pres.libro.isbn == isbn:
+                prestamo_encontrado = pres
                 break
         
         if not prestamo_encontrado:

@@ -1,8 +1,8 @@
 from datetime import date, timedelta
 import pytest
-from biblioteca.Libro import Libro
-from biblioteca.Usuario import Usuario
-from biblioteca.Prestamo import Prestamo
+from Libro import Libro
+from Usuario import Usuario
+from Prestamo import Prestamo
 
 
 def crear_prestamo_activo():

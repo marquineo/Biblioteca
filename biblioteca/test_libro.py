@@ -1,5 +1,5 @@
 import pytest
-from biblioteca.Libro import Libro
+from Libro import Libro
 
 
 def test_creacion_libro_basica():

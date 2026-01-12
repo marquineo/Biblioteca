@@ -33,7 +33,7 @@ class Prestamo:
         if self.fecha_devolucion is not None:
             return False
         
-        # Si el test no pasa fecha, usamos hoy
+        # Si no pasamos fecha por parámetro, utilizamos hoy
         comparar_con = fecha_consulta if fecha_consulta else date.today()
         return comparar_con > self.fin
 

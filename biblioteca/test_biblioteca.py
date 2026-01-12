@@ -1,8 +1,8 @@
 from datetime import date
 import pytest
-from biblioteca.Biblioteca import Biblioteca
-from biblioteca.Libro import Libro
-from biblioteca.Usuario import Usuario
+from Biblioteca import Biblioteca
+from Libro import Libro
+from Usuario import Usuario
 
 
 @pytest.fixture

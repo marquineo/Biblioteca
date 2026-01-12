@@ -1,5 +1,5 @@
 import pytest
-from biblioteca.Usuario import Usuario
+from Usuario import Usuario
 
 
 def test_usuario_basico():
