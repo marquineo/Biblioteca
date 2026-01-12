@@ -52,7 +52,8 @@ while True:
                     print("Error: Ese identificador ya existe.")
 
             case 3:
-                biblioteca.mostrar_info()
+                biblioteca.mostrar_stock()
+                biblioteca.mostrar_usuarios()
                 isbn = input("Dime el ISBN del libro: ")
                 uid = input("Dame el ID del usuario: ")
                 fecha_hoy = date.today()
@@ -111,6 +112,3 @@ while True:
         print(f"Error de datos: {e}")
     except Exception as e:
         print(f"Ha ocurrido un error inesperado: {e}")
-
-        #TODO cambiar mostrar_info() (opcion 3 del menú  principal)
-        #TODO asegurar que no se muestrn libros rpestados en stock
