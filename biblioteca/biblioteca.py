@@ -3,13 +3,14 @@ from usuario import Usuario
 from prestamo import Prestamo
 from datetime import date, datetime
 
+
 class Biblioteca:
     def __init__(self):
         self.usuarios: list[Usuario] = []
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos = []
-        
+
         # Cargamos datos por defecto
         self._cargar_datos_por_defecto()
 
@@ -23,6 +24,18 @@ class Biblioteca:
         self.registrar_libro(Libro("978-3", "1984", "George Orwell"))
         self.registrar_libro(Libro("978-4", "Harry Potter", "J.K. Rowling"))
         self.registrar_libro(Libro("978-5", "Don Quijote", "Cervantes"))
+
+    def __iter__(self):
+        return iter(self.libros)
+
+    def __getitem__(self, indice):
+        return self.libros[indice]
+
+    def __add__(self, libro):
+        if not isinstance(libro, Libro):
+            return NotImplemented
+        self.libros.append(libro)
+        return self
 
     def registrar_libro(self, libro: Libro):
         self.libros.append(libro)
@@ -41,7 +54,7 @@ class Biblioteca:
     def buscar_usuario(self, id_buscado):
         """Busca un usuario comparando directamente el atributo id"""
         for user in self.usuarios:
-            if user.id == id_buscado:
+            if user() == id_buscado:
                 return user
         return None
 
@@ -60,7 +73,7 @@ class Biblioteca:
         # 1. Verificar si el libro existe y está disponible
         if not libro:
             raise RuntimeError("El libro no está disponible o no existe")
-        
+
         # 2. Verificar si el usuario existe
         if not usuario:
             raise RuntimeError("Usuario no encontrado")
@@ -75,10 +88,10 @@ class Biblioteca:
 
         # Crear préstamo
         nuevo_prestamo = Prestamo(libro, usuario, fecha_inicio)
-        
+
         self.prestamos_activos.append(nuevo_prestamo)
         self.libros.remove(libro)
-        
+
         return nuevo_prestamo
 
     def devolver_libro(self, isbn, fecha_devolucion):
@@ -91,7 +104,7 @@ class Biblioteca:
             if pres.libro.isbn == isbn:
                 prestamo_encontrado = pres
                 break
-        
+
         if not prestamo_encontrado:
             return None
 
@@ -99,14 +112,14 @@ class Biblioteca:
         self.prestamos_activos.remove(prestamo_encontrado)
         self.prestamos_vencidos.append(prestamo_encontrado)
         self.libros.append(prestamo_encontrado.libro)
-        
+
         return prestamo_encontrado
 
     def mostrar_usuarios(self):
         print("=====USUARIOS=====")
         for usuario in self.usuarios:
             print(usuario)
-    
+
     def mostrar_stock(self):
         print("=====LIBROS EN STOCK=====")
         for libro in self.libros:

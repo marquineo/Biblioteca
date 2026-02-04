@@ -10,3 +10,6 @@ class Usuario:
 
     def __str__(self):
         return f"ID Usuario: {self.id} | Nombre: {self.nombre} | max. Préstamos a la vez: {self.max_prestamos}"
+
+    def __call__(self):
+        return self.id

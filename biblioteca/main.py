@@ -31,7 +31,7 @@ while True:
                 titulo = input("Dame el título: ")
                 autor = input("Dame el autor: ")
                 nuevo_libro = Libro(isbn, titulo, autor)
-                biblioteca.registrar_libro(nuevo_libro)
+                biblioteca = biblioteca + nuevo_libro
                 print("Libro registrado con éxito.")
 
             case 2:
