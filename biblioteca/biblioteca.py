@@ -9,7 +9,7 @@ class Biblioteca:
         self.usuarios: list[Usuario] = []
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
-        self.prestamos_vencidos = []
+        self.prestamos_vencidos: list[Prestamo] = []
 
         # Cargamos datos por defecto
         self._cargar_datos_por_defecto()
@@ -113,7 +113,33 @@ class Biblioteca:
         self.prestamos_vencidos.append(prestamo_encontrado)
         self.libros.append(prestamo_encontrado.libro)
 
+        multa = self.calcular_multa(prestamo_encontrado.fin,fecha_devolucion)
+        if not multa:
+            print("Libro devuelto en plazo")
+        else:
+            print(f"Libro devuelto fuera de plazo, por favor ingrese la multa: {multa}€")
+
         return prestamo_encontrado
+    
+    def calcular_multa(self,fecha_limite,fecha_devolucion):
+        """
+        Calcula la cantidad de multa por devolucion tardia (10€/dia)
+        devuelve None si la entrega a sido a tiempo
+        """
+        diferencia = fecha_devolucion - fecha_limite
+
+        dias_retrasados = diferencia.days
+
+        if dias_retrasados > 0:
+            return dias_retrasados * 10
+        return None
+
+    def eliminar_libro(self, isbn):
+        libro = self.buscar_libro(isbn)
+        if not libro:
+            raise RuntimeError(f"No existe ningun libro con el ISBN: {isbn}")
+        self.libros.remove(libro)
+        print(f"Libro eliminado satisfactoriamente -> {libro}")
 
     def mostrar_usuarios(self):
         print("=====USUARIOS=====")
@@ -135,4 +161,9 @@ class Biblioteca:
     def mostrar_prestamos_activos(self):
         print("======PRÉSTAMOS ACTIVOS======")
         for item in self.prestamos_activos:
+            print(item)
+
+    def mostrar_prestamos_vencidos(self):
+        print("======PRÉSTAMOS VENCIDOS======")
+        for item in self.prestamos_vencidos:
             print(item)
