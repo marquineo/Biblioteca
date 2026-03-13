@@ -1,10 +1,5 @@
 [
     {
-        "isbn": "978-1",
-        "titulo": "Cien años de soledad",
-        "autor": "G. Márquez"
-    },
-    {
         "isbn": "978-2",
         "titulo": "El Principito",
         "autor": "Saint-Exupéry"

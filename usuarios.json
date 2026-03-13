@@ -1,0 +1,12 @@
+[
+    {
+        "id": "U001",
+        "nombre": "Ana García",
+        "max_prestamos": 3
+    },
+    {
+        "id": "U002",
+        "nombre": "Carlos Pérez",
+        "max_prestamos": 3
+    }
+]

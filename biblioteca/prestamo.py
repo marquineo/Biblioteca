@@ -3,7 +3,6 @@ from usuario import Usuario
 from datetime import date, timedelta
 
 class Prestamo:
-    MULTA_DIARIA = 2
 
     def __init__(
         self,
@@ -36,17 +35,6 @@ class Prestamo:
         # Si no pasamos fecha por parámetro, utilizamos hoy
         comparar_con = fecha_consulta if fecha_consulta else date.today()
         return comparar_con > self.fin
-
-    def calcular_multa(self, fecha_consulta: date = None) -> int:
-        """Calcula la multa comparando la fecha de devolución (o consulta) con el fin"""
-        # Determinamos qué fecha usar para el cálculo
-        fecha_final = self.fecha_devolucion if self.fecha_devolucion else fecha_consulta
-        
-        if not fecha_final or fecha_final <= self.fin:
-            return 0
-            
-        dias_retraso = (fecha_final - self.fin).days
-        return dias_retraso * self.MULTA_DIARIA
 
     def devolver(self, fecha: date):
         """Registra la devolución. Lanza RuntimeError si ya estaba devuelto"""
