@@ -1,5 +1,10 @@
 [
     {
+        "isbn": "978-2",
+        "titulo": "El Principito",
+        "autor": "Saint-Exupéry"
+    },
+    {
         "isbn": "978-3",
         "titulo": "1984",
         "autor": "George Orwell"
@@ -15,8 +20,8 @@
         "autor": "Cervantes"
     },
     {
-        "isbn": "978-2",
-        "titulo": "El Principito",
-        "autor": "Saint-Exupéry"
+        "isbn": "978-1",
+        "titulo": "Cien años de soledad",
+        "autor": "G. Márquez"
     }
 ]

@@ -3,6 +3,7 @@ from usuario import Usuario
 from prestamo import Prestamo
 from datetime import date, datetime
 from prestamo_factory import PrestamoFactory
+from strategy_multa import MultaEstandar
 
 
 class Biblioteca:
@@ -11,15 +12,15 @@ class Biblioteca:
     Esta clase simplifica la gestión del sistema de biblioteca,
     centralizando operaciones sobre libros, usuarios y préstamos.
     """
-    MULTA_EUR_DIA = 10
     def __init__(self):
         self.usuarios: list[Usuario] = []
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos: list[Prestamo] = []
+        self.estrategia_multa = MultaEstandar()
 
         # Cargamos datos por defecto
-        #self._cargar_datos_por_defecto()
+        # self._cargar_datos_por_defecto()
 
     def _cargar_datos_por_defecto(self):
         # Usuarios por defecto
@@ -94,7 +95,6 @@ class Biblioteca:
             raise RuntimeError("El usuario ya tiene demasiados libros prestados")
 
         # Crear préstamo
-
         nuevo_prestamo = PrestamoFactory.crear_prestamo(libro, usuario, fecha_inicio)
 
         self.prestamos_activos.append(nuevo_prestamo)
@@ -136,11 +136,11 @@ class Biblioteca:
         devuelve None si la entrega a sido a tiempo
         """
         diferencia = fecha_devolucion - fecha_limite
-
         dias_retrasados = diferencia.days
 
         if dias_retrasados > 0:
-            return dias_retrasados * self.MULTA_EUR_DIA
+            return self.estrategia_multa.calcular(dias_retrasados)
+
         return None
 
     def eliminar_libro(self, isbn):
@@ -189,4 +189,15 @@ class Biblioteca:
             if prestamo.libro.isbn == isbn:
                 return prestamo.libro
 
+        return None
+    
+    def buscar_libro_por_isbn(self, isbn):
+        libro = self.buscar_libro(isbn)
+
+        if libro:
+            print("===== LIBRO ENCONTRADO =====")
+            print(libro)
+            return libro
+
+        print(f"No se encontró ningún libro con ISBN: {isbn}")
         return None

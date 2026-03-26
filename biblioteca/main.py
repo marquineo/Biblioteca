@@ -44,7 +44,8 @@ while True:
     print("8- Consultar inventario y exportaciones")
     print("9- Listar usuarios")
     print("10- Mostrar historial de usuario por ID")
-    print("11- Salir")
+    print("11- Buscar libro por ISBN")
+    print("12- Salir")
 
     opcion = input("Selecciona una opción: ")
 
@@ -205,8 +206,11 @@ while True:
                     else:
                         for prestamo in usuario.historial:
                             print(prestamo)
-
             case 11:
+                isbn = input("Introduce el ISBN del libro: ")
+                biblioteca.buscar_libro_por_isbn(isbn)
+                
+            case 12:
                 print("Saliendo del sistema...")
                 break
 

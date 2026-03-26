@@ -160,26 +160,57 @@ class DataIOMixin:
 
         contador = 0
 
-        for item in datos:
+        for i, item in enumerate(datos, start=1):
 
-            libro = self.buscar_libro_total(item["isbn"])
-            usuario = self.buscar_usuario(item["usuario"])
+            try:
+                # Validación básica
+                if "isbn" not in item or "usuario" not in item:
+                    raise ValueError("Faltan campos obligatorios (isbn o usuario)")
 
-            if libro and usuario:
+                libro = self.buscar_libro_total(item["isbn"])
+                usuario = self.buscar_usuario(item["usuario"])
+
+                if not libro:
+                    raise RuntimeError(f"Libro no encontrado: {item['isbn']}")
+
+                if not usuario:
+                    raise RuntimeError(f"Usuario no encontrado: {item['usuario']}")
 
                 inicio = date.fromisoformat(item["inicio"])
                 fin = date.fromisoformat(item["fin"])
 
                 dias = (fin - inicio).days
 
+                if dias <= 0:
+                    raise ValueError("Fecha fin inválida")
+
+                # Evitar duplicados
+                ya_existe = any(
+                    p.libro.isbn == item["isbn"] and p.usuario.id == item["usuario"]
+                    for p in self.prestamos_activos + self.prestamos_vencidos
+                )
+
+                if ya_existe:
+                    print(f"⚠️ Préstamo duplicado ignorado (entrada {i})")
+                    continue
+
                 prestamo = Prestamo(libro, usuario, inicio, dias)
 
-                self.prestamos_activos.append(prestamo)
+                # Si viene fecha_devolucion (por compatibilidad futura)
+                if item.get("fecha_devolucion"):
+                    fecha_dev = date.fromisoformat(item["fecha_devolucion"])
+                    prestamo.fecha_devolucion = fecha_dev
+                    self.prestamos_vencidos.append(prestamo)
+                else:
+                    self.prestamos_activos.append(prestamo)
 
                 if libro in self.libros:
                     self.libros.remove(libro)
 
                 contador += 1
+
+            except Exception as e:
+                print(f"❌ Error en entrada {i}: {e}")
 
         print(f"{contador} préstamos importados desde JSON")
 
@@ -214,35 +245,62 @@ class DataIOMixin:
     def importar_prestamos_csv(self, archivo="prestamos.csv"):
 
         with open(archivo, newline="", encoding="utf-8") as f:
-
             reader = csv.DictReader(f)
 
             contador = 0
 
-            for fila in reader:
+            for i, fila in enumerate(reader, start=1):
 
-                libro = self.buscar_libro_total(fila["ISBN"])
-                usuario = self.buscar_usuario(fila["UsuarioID"])
+                try:
+                    # Validar campos obligatorios
+                    if not fila.get("ISBN") or not fila.get("UsuarioID"):
+                        raise ValueError("Faltan campos obligatorios (ISBN o UsuarioID)")
 
-                if libro and usuario:
+                    libro = self.buscar_libro_total(fila["ISBN"])
+                    usuario = self.buscar_usuario(fila["UsuarioID"])
 
+                    if not libro:
+                        raise RuntimeError(f"Libro no encontrado: {fila['ISBN']}")
+
+                    if not usuario:
+                        raise RuntimeError(f"Usuario no encontrado: {fila['UsuarioID']}")
+
+                    # Parseo de fechas
                     inicio = date.fromisoformat(fila["FechaInicio"])
                     fin = date.fromisoformat(fila["FechaFin"])
 
                     dias = (fin - inicio).days
 
+                    if dias <= 0:
+                        raise ValueError("FechaFin debe ser posterior a FechaInicio")
+
+                    # Evitar duplicados
+                    ya_existe = any(
+                        p.libro.isbn == fila["ISBN"] and p.usuario.id == fila["UsuarioID"]
+                        for p in self.prestamos_activos + self.prestamos_vencidos
+                    )
+
+                    if ya_existe:
+                        print(f"⚠️ Préstamo duplicado ignorado (línea {i})")
+                        continue
+
                     prestamo = Prestamo(libro, usuario, inicio, dias)
 
-                    if fila["FechaDevolucion"]:
-                        prestamo.fecha_devolucion = date.fromisoformat(
-                            fila["FechaDevolucion"]
-                        )
+                    # Devolución
+                    if fila.get("FechaDevolucion"):
+                        fecha_dev = date.fromisoformat(fila["FechaDevolucion"])
+                        prestamo.fecha_devolucion = fecha_dev
+                        self.prestamos_vencidos.append(prestamo)
+                    else:
+                        self.prestamos_activos.append(prestamo)
 
-                    self.prestamos_activos.append(prestamo)
-
+                    # Quitar libro del stock si está
                     if libro in self.libros:
                         self.libros.remove(libro)
 
                     contador += 1
+
+                except Exception as e:
+                    print(f"❌ Error en línea {i}: {e}")
 
         print(f"{contador} préstamos importados desde CSV")
