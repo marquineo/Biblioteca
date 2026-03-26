@@ -5,6 +5,7 @@ from datetime import date, datetime
 
 
 class Biblioteca:
+    MULTA_EUR_DIA = 10
     def __init__(self):
         self.usuarios: list[Usuario] = []
         self.libros: list[Libro] = []
@@ -12,7 +13,7 @@ class Biblioteca:
         self.prestamos_vencidos: list[Prestamo] = []
 
         # Cargamos datos por defecto
-        self._cargar_datos_por_defecto()
+        #self._cargar_datos_por_defecto()
 
     def _cargar_datos_por_defecto(self):
         # Usuarios por defecto
@@ -131,7 +132,7 @@ class Biblioteca:
         dias_retrasados = diferencia.days
 
         if dias_retrasados > 0:
-            return dias_retrasados * 10
+            return dias_retrasados * self.MULTA_EUR_DIA
         return None
 
     def eliminar_libro(self, isbn):
@@ -167,3 +168,17 @@ class Biblioteca:
         print("======PRÉSTAMOS VENCIDOS======")
         for item in self.prestamos_vencidos:
             print(item)
+
+    #funcion para importaciones (si no, no fucniona. por que havo remove(libro) cuando hago prestamos)
+    def buscar_libro_total(self, isbn):
+
+        libro = self.buscar_libro(isbn)
+
+        if libro:
+            return libro
+
+        for prestamo in self.prestamos_activos:
+            if prestamo.libro.isbn == isbn:
+                return prestamo.libro
+
+        return None

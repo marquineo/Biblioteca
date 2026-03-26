@@ -2,6 +2,7 @@ from biblioteca import Biblioteca
 from libro import Libro
 from usuario import Usuario
 from datetime import date,timedelta
+from data_io_mixin import DataIOMixin
 
 from plugin_loader import cargar_plugins
 
@@ -12,9 +13,18 @@ from plugin_loader import cargar_plugins
 
 plugins = cargar_plugins()
 
-BibliotecaDinamica = type("BibliotecaDinamica", tuple([Biblioteca] + plugins), {})
+BibliotecaFinal = type(
+    "BibliotecaFinal",
+    tuple([DataIOMixin, Biblioteca] + plugins),
+    {}
+)
 
-biblioteca = BibliotecaDinamica()
+biblioteca = BibliotecaFinal()
+
+#Muestra plugins cargados
+print("Plugins cargados:")
+for p in plugins:
+    print("-", p.__name__)
 
 # ===============================
 # PROGRAMA PRINCIPAL
@@ -32,7 +42,8 @@ while True:
     print("6- Consultar préstamos activos")
     print("7- Consultar préstamos vencidos")
     print("8- Consultar inventario y exportaciones")
-    print("9- Salir")
+    print("9- Listar usuarios")
+    print("10- Salir")
 
     opcion = input("Selecciona una opción: ")
 
@@ -126,9 +137,11 @@ while True:
                     print("1- Mostrar libros en stock")
                     print("2- mostrar todos los libros")
                     print("3- Mostrar usuarios")
-                    print("4- Exportar libros en CSV")
-                    print("5- Exportar libros en JSON")
-                    print("6- Salir")
+                    print("4- Exportar datos CSV")
+                    print("5- Exportar datos JSON")
+                    print("6- Importar datos CSV")
+                    print("7- Importar datos JSON")
+                    print("8- Salir")
 
                     entrada = input("Selecciona una opción: ")
 
@@ -151,9 +164,21 @@ while True:
 
                         case 4:
                             biblioteca.exportar_libros_csv()
+                            biblioteca.exportar_usuarios_csv()
+                            biblioteca.exportar_prestamos_csv()
                         case 5:
                             biblioteca.exportar_libros_json()
+                            biblioteca.exportar_usuarios_json()
+                            biblioteca.exportar_prestamos_json()
                         case 6:
+                            biblioteca.importar_libros_csv()
+                            biblioteca.importar_usuarios_csv()
+                            biblioteca.importar_prestamos_csv()
+                        case 7:
+                            biblioteca.importar_libros_json()
+                            biblioteca.importar_usuarios_json()
+                            biblioteca.importar_prestamos_json()
+                        case 8:
                             print("Volviendo al menú principal....")
                             break
 
@@ -161,6 +186,9 @@ while True:
                             print("Opción no válida (1-4).")
 
             case 9:
+                print("***USUARIOS***")
+                biblioteca.mostrar_usuarios()
+            case 10:
 
                 print("Saliendo del sistema...")
                 break
