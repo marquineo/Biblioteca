@@ -43,7 +43,8 @@ while True:
     print("7- Consultar préstamos vencidos")
     print("8- Consultar inventario y exportaciones")
     print("9- Listar usuarios")
-    print("10- Salir")
+    print("10- Mostrar historial de usuario por ID")
+    print("11- Salir")
 
     opcion = input("Selecciona una opción: ")
 
@@ -188,13 +189,29 @@ while True:
             case 9:
                 print("***USUARIOS***")
                 biblioteca.mostrar_usuarios()
-            case 10:
 
+            case 10:
+                uid = input("Introduce el ID del usuario: ")
+
+                usuario = biblioteca.buscar_usuario(uid)
+
+                if not usuario:
+                    print("Usuario no encontrado")
+                else:
+                    print(f"--- Historial de {usuario.nombre} ---")
+
+                    if not usuario.historial:
+                        print("No tiene préstamos en su historial")
+                    else:
+                        for prestamo in usuario.historial:
+                            print(prestamo)
+
+            case 11:
                 print("Saliendo del sistema...")
                 break
 
             case _:
-                print("Opción no válida (1-7).")
+                print("Opción no válida")
 
     except RuntimeError as e:
         print(f"Error de operación: {e}")

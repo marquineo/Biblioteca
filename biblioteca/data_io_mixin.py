@@ -34,18 +34,6 @@ class DataIOMixin:
 
         print(f"{contador} libros importados desde CSV")
 
-    # def exportar_libros_csv(self, archivo="libros.csv"):
-
-    #     with open(archivo, "w", newline="", encoding="utf-8") as f:
-
-    #         writer = csv.writer(f)
-    #         writer.writerow(["ISBN", "Titulo", "Autor"])
-
-    #         for libro in self.libros:
-    #             writer.writerow([libro.isbn, libro.titulo, libro.autor])
-
-    #     print("Libros exportados correctamente a CSV")
-
     def importar_libros_json(self, archivo="libros.json"):
 
         with open(archivo, encoding="utf-8") as f:
@@ -64,22 +52,6 @@ class DataIOMixin:
 
         print(f"{contador} libros importados desde JSON")
 
-    # def exportar_libros_json(self, archivo="libros.json"):
-
-    #     datos = []
-
-    #     for libro in self.libros:
-
-    #         datos.append({
-    #             "isbn": libro.isbn,
-    #             "titulo": libro.titulo,
-    #             "autor": libro.autor
-    #         })
-
-    #     with open(archivo, "w", encoding="utf-8") as f:
-    #         json.dump(datos, f, indent=4, ensure_ascii=False)
-
-    #     print("Libros exportados a JSON")
 
     # ======================
     # USUARIOS

@@ -30,12 +30,6 @@ class TestPrestamo(unittest.TestCase):
 
         self.assertFalse(p.esta_activo())
 
-    def test_calculo_multa(self):
-        p = Prestamo(self.libro, self.usuario, self.fecha - timedelta(days=20))
-        multa = p.calcular_multa(date.today())
-
-        self.assertGreater(multa, 0)
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -11,6 +11,12 @@ class TestBiblioteca(unittest.TestCase):
     def setUp(self):
         self.b = Biblioteca()
 
+        self.usuario = Usuario("U1", "Test")
+        self.libro = Libro("123", "Libro Test", "Autor")
+
+        self.b.registrar_usuario(self.usuario)
+        self.b.registrar_libro(self.libro)
+
     def test_registrar_usuario(self):
         u = Usuario("U100", "Test")
 
@@ -37,21 +43,21 @@ class TestBiblioteca(unittest.TestCase):
         self.assertEqual(encontrado, l)
 
     def test_prestar_libro(self):
-        libro = self.b.libros[0]
-        usuario = self.b.usuarios[0]
-
-        prestamo = self.b.prestar_libro(libro.isbn, usuario.id, date.today())
+        prestamo = self.b.prestar_libro(
+            self.libro.isbn, self.usuario.id, date.today()
+        )
 
         self.assertIsNotNone(prestamo)
         self.assertEqual(len(self.b.prestamos_activos), 1)
 
     def test_devolver_libro(self):
-        libro = self.b.libros[0]
-        usuario = self.b.usuarios[0]
+        self.b.prestar_libro(
+            self.libro.isbn, self.usuario.id, date.today()
+        )
 
-        self.b.prestar_libro(libro.isbn, usuario.id, date.today())
-
-        devuelto = self.b.devolver_libro(libro.isbn, date.today())
+        devuelto = self.b.devolver_libro(
+            self.libro.isbn, date.today()
+        )
 
         self.assertIsNotNone(devuelto)
         self.assertEqual(len(self.b.prestamos_activos), 0)

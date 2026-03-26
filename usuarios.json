@@ -8,5 +8,10 @@
         "id": "U002",
         "nombre": "Carlos Pérez",
         "max_prestamos": 3
+    },
+    {
+        "id": "123",
+        "nombre": "123",
+        "max_prestamos": 5
     }
 ]

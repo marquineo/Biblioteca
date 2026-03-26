@@ -2,9 +2,15 @@ from libro import Libro
 from usuario import Usuario
 from prestamo import Prestamo
 from datetime import date, datetime
+from prestamo_factory import PrestamoFactory
 
 
 class Biblioteca:
+    """
+    Patrón FACADE:
+    Esta clase simplifica la gestión del sistema de biblioteca,
+    centralizando operaciones sobre libros, usuarios y préstamos.
+    """
     MULTA_EUR_DIA = 10
     def __init__(self):
         self.usuarios: list[Usuario] = []
@@ -88,7 +94,8 @@ class Biblioteca:
             raise RuntimeError("El usuario ya tiene demasiados libros prestados")
 
         # Crear préstamo
-        nuevo_prestamo = Prestamo(libro, usuario, fecha_inicio)
+
+        nuevo_prestamo = PrestamoFactory.crear_prestamo(libro, usuario, fecha_inicio)
 
         self.prestamos_activos.append(nuevo_prestamo)
         self.libros.remove(libro)
@@ -120,6 +127,7 @@ class Biblioteca:
         else:
             print(f"Libro devuelto fuera de plazo, por favor ingrese la multa: {multa}€")
 
+        prestamo_encontrado.usuario.historial.append(prestamo_encontrado) #guardamos en historial
         return prestamo_encontrado
     
     def calcular_multa(self,fecha_limite,fecha_devolucion):

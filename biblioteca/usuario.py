@@ -3,6 +3,8 @@ from persona import Persona
 class Usuario(Persona):
     def __init__(self, id, nombre, max_prestamos=3):
         super().__init__(id, nombre)
+        self.max_prestamos = max_prestamos
+        self.historial: list = []
 
         if max_prestamos < 1:
             raise ValueError("Minimo 1 prestamo maximo")
