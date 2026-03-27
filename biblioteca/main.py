@@ -41,7 +41,7 @@ while True:
     print("5- Devolver libro")
     print("6- Consultar préstamos activos")
     print("7- Consultar préstamos vencidos")
-    print("8- Consultar inventario y exportaciones")
+    print("8- Consultar inventario y exportaciones-->")
     print("9- Listar usuarios")
     print("10- Mostrar historial de usuario por ID")
     print("11- Buscar libro por ISBN")

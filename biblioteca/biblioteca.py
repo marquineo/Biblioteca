@@ -3,7 +3,7 @@ from usuario import Usuario
 from prestamo import Prestamo
 from datetime import date, datetime
 from prestamo_factory import PrestamoFactory
-from strategy_multa import MultaEstandar
+from strategy_multa import MultaEstandar, MultaReducida, MultaProgresiva
 
 
 class Biblioteca:
@@ -17,7 +17,7 @@ class Biblioteca:
         self.libros: list[Libro] = []
         self.prestamos_activos: list[Prestamo] = []
         self.prestamos_vencidos: list[Prestamo] = []
-        self.estrategia_multa = MultaEstandar()
+        self.estrategia_multa = MultaProgresiva()
 
         # Cargamos datos por defecto
         # self._cargar_datos_por_defecto()
